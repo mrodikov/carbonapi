@@ -1,4 +1,4 @@
-module github.com/mrodikov/carbonapi
+module github.com/go-graphite/carbonapi
 
 go 1.14
 
