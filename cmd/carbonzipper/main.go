@@ -172,16 +172,6 @@ const (
 	formatTypeCarbonAPIV2PB = "carbonapi_v2_pb"
 )
 
-func statHandler(w http.ResponseWriter, req *http.Request) {
-	result := make(map[string]string)
-	result["goroutines"] = strconv.Itoa(runtime.NumGoroutine())
-	result["numcpu"] = strconv.Itoa(runtime.NumCPU())
-
-	w.Header().Set("Content-Type", contentTypeJSON)
-	jEnc := json.NewEncoder(w)
-	jEnc.Encode(result)
-}
-
 func findHandler(w http.ResponseWriter, req *http.Request) {
 	t0 := time.Now()
 	uuid := uuid.NewV4()
@@ -733,7 +723,6 @@ func main() {
 	http.HandleFunc("/metrics/find/", httputil.TrackConnections(httputil.TimeHandler(util.ParseCtx(findHandler, util.HeaderUUIDAPI), bucketRequestTimes)))
 	http.HandleFunc("/render/", httputil.TrackConnections(httputil.TimeHandler(util.ParseCtx(renderHandler, util.HeaderUUIDAPI), bucketRequestTimes)))
 	http.HandleFunc("/info/", httputil.TrackConnections(httputil.TimeHandler(util.ParseCtx(infoHandler, util.HeaderUUIDAPI), bucketRequestTimes)))
-	http.HandleFunc("/stat/", httputil.TrackConnections(httputil.TimeHandler(util.ParseCtx(statHandler, util.HeaderUUIDAPI), bucketRequestTimes)))
 	http.HandleFunc("/lb_check", lbCheckHandler)
 
 	// nothing in the config? check the environment

@@ -14,6 +14,7 @@ supported requests:
 	/tags/autoComplete/tags/
     /tags/autoComplete/values/
     /version/
+	/stat/
 `)
 
 func usageHandler(w http.ResponseWriter, r *http.Request) {

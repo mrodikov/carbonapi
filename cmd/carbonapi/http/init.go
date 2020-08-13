@@ -1,14 +1,27 @@
 package http
 
 import (
+	"encoding/json"
 	"expvar"
 	"net/http"
 	"net/http/pprof"
+	"runtime"
+	"strconv"
 
 	"github.com/dgryski/httputil"
 	"github.com/go-graphite/carbonapi/cmd/carbonapi/config"
 	"github.com/go-graphite/carbonapi/util/ctx"
 )
+
+func statHandler(w http.ResponseWriter, req *http.Request) {
+	result := make(map[string]string)
+	result["goroutines"] = strconv.Itoa(runtime.NumGoroutine())
+	result["numcpu"] = strconv.Itoa(runtime.NumCPU())
+
+	w.Header().Set("Content-Type", contentTypeJSON)
+	jEnc := json.NewEncoder(w)
+	jEnc.Encode(result)
+}
 
 func InitHandlers(headersToPass, headersToLog []string) *http.ServeMux {
 	r := http.NewServeMux()
@@ -36,6 +49,8 @@ func InitHandlers(headersToPass, headersToLog []string) *http.ServeMux {
 	r.HandleFunc(config.Config.Prefix+"/_internal/capabilities/", enrichContextWithHeaders(headersToPass, headersToLog, capabilityHandler))
 
 	r.HandleFunc(config.Config.Prefix+"/", enrichContextWithHeaders(headersToPass, headersToLog, usageHandler))
+
+	r.HandleFunc(config.Config.Prefix+"/stat/", enrichContextWithHeaders(headersToPass, headersToLog, statHandler))
 
 	if config.Config.Expvar.Enabled {
 		if config.Config.Expvar.Listen == "" || config.Config.Expvar.Listen == config.Config.Listen {
