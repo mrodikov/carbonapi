@@ -196,6 +196,7 @@ func (bg *BroadcastGroup) splitRequest(ctx context.Context, request *protov3.Mul
 					e = e.WithCause(types.ErrUnmarshalFailed)
 				} else {
 					e = e.WithCause(types.ErrNoMetricsFetched)
+					bg.logger.Info(fmt.Sprintf("DBG: find: no metrics ", zap.Any("response", f)))
 				}
 			}
 			err = e
