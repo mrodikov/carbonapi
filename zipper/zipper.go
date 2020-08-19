@@ -319,12 +319,13 @@ func (z Zipper) FetchProtoV3(ctx context.Context, request *protov3.MultiFetchReq
 	} else {
 		e = e.WithCause(err)
 	}
-	if e != nil {
+	if e != nil { // Info
 		logger.Debug("had errors while fetching result",
 			zap.Any("errors", e),
 			zap.Int("httpCode", merry.HTTPCode(e)),
 		)
 	}
+
 	if res == nil || len(res.Metrics) == 0 {
 		logger.Debug("no metrics fetched",
 			zap.Any("errors", e),
@@ -333,7 +334,7 @@ func (z Zipper) FetchProtoV3(ctx context.Context, request *protov3.MultiFetchReq
 		err := types.ErrNoMetricsFetched
 		if e != nil {
 			err = err.WithHTTPCode(merry.HTTPCode(e))
-			logger.Info(fmt.Sprintf("DBG: fetch: no metrics"), zap.Any("result", res), zap.Any("error", err))
+			logger.Info(fmt.Sprintf("DBG: fetch: no metrics"), zap.Any("result", res), zap.Any("stats", stats), zap.Any("error", err))
 		} else {
 			err = err.WithHTTPCode(404)
 		}
