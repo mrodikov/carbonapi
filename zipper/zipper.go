@@ -305,6 +305,8 @@ func (z Zipper) FetchProtoV3(ctx context.Context, request *protov3.MultiFetchReq
 		}
 	}
 
+	logger.Info("DBG: metricsRequest", zap.Any("requests", request))
+
 	res, stats, err := z.storeBackends.Fetch(ctx, request)
 	if statsSearch != nil {
 		if stats == nil {
