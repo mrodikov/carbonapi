@@ -335,7 +335,8 @@ func (z Zipper) FetchProtoV3(ctx context.Context, request *protov3.MultiFetchReq
 
 		err := types.ErrNoMetricsFetched
 		if e != nil {
-			err = err.WithHTTPCode(merry.HTTPCode(e))
+			//err = err.WithHTTPCode(merry.HTTPCode(e))
+			err = err.WithHTTPCode(404)
 			logger.Info(fmt.Sprintf("DBG: fetch: no metrics"), zap.Any("result", res), zap.Any("stats", stats), zap.Any("error", err))
 		} else {
 			err = err.WithHTTPCode(404)
