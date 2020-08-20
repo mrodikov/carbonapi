@@ -2,6 +2,7 @@ package types
 
 import (
 	"context"
+	"fmt"
 	"math"
 
 	"github.com/ansel1/merry"
@@ -46,6 +47,8 @@ func DoRequest(ctx context.Context, logger *zap.Logger, clients []BackendServer,
 		go fetcher(ctx, logger, client, requests, resCh)
 	}
 
+	logger.Info(fmt.Sprintf("DBG: DoRequest with %s clients", len(clients)))
+
 	answeredServers := make(map[string]struct{})
 	responseCount := 0
 GATHER:
@@ -59,7 +62,7 @@ GATHER:
 		case <-ctx.Done():
 			err := errors.ErrTimeout.WithValue("timedout_backends", NoAnswerBackends(clients, answeredServers))
 			result.AddError(err)
-
+			logger.Warn("DBG: timedout backend", zap.Any("noanswer_backends", NoAnswerBackends(clients, answeredServers)))
 			break GATHER
 		}
 	}

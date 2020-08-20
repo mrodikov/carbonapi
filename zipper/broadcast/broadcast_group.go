@@ -3,11 +3,9 @@ package broadcast
 import (
 	"context"
 	"fmt"
+	"github.com/ansel1/merry"
 	"sort"
 	"strings"
-	"time"
-
-	"github.com/ansel1/merry"
 
 	"github.com/go-graphite/carbonapi/limiter"
 	"github.com/go-graphite/carbonapi/pathcache"
@@ -137,7 +135,7 @@ func (bg *BroadcastGroup) doSingleFetch(ctx context.Context, logger *zap.Logger,
 	response := types.NewServerFetchResponse()
 	response.Server = backend.Name()
 
-	start := time.Now()
+	//start := time.Now()
 	if err := bg.limiter.Enter(ctx, backend.Name()); err != nil {
 		logger.Debug("timeout waiting for a slot")
 		resCh <- response.NonFatalError(merry.Prepend(err, "timeout waiting for slot"))
@@ -146,20 +144,20 @@ func (bg *BroadcastGroup) doSingleFetch(ctx context.Context, logger *zap.Logger,
 
 	logger.Debug("got slot")
 	defer bg.limiter.Leave(ctx, backend.Name())
-	elapsed := time.Since(start)
-	logger.Debug(fmt.Sprintf("Slot wait time: %s", elapsed))
+	//elapsed := time.Since(start)
+	//logger.Info(fmt.Sprintf("Slot wait time: %s", elapsed))
 
 	// uuid := util.GetUUID(ctx)
 	var err merry.Error
 	for _, req := range requests {
 		logger.Debug("sending request")
-		start := time.Now()
+		//start := time.Now()
 		r := types.NewServerFetchResponse()
 		r.Response, r.Stats, err = backend.Fetch(ctx, req)
 		r.AddError(err)
 		logger.Debug("got response")
-		elapsed := time.Since(start)
-		logger.Debug(fmt.Sprintf("Single fetch time: %s", elapsed))
+		//elapsed := time.Since(start)
+		//logger.Info(fmt.Sprintf("Single fetch time: %s", elapsed))
 		_ = response.Merge(r)
 	}
 
@@ -264,9 +262,9 @@ func (bg *BroadcastGroup) Fetch(ctx context.Context, request *protov3.MultiFetch
 	requests, err := bg.splitRequest(ctx, request)
 	logger.Info("DBG: splitted requests", zap.Any("requests", requests))
 
-	start := time.Now()
+	//start := time.Now()
 	zipperRequests, totalMetricsCount := getFetchRequestMetricStats(requests, bg, backends)
-	logger.Info(fmt.Sprintf("DBG: getFetchRequestMetricStats %s", time.Since(start)))
+	//logger.Info(fmt.Sprintf("DBG: getFetchRequestMetricStats %s", time.Since(start)))
 
 	result := types.NewServerFetchResponse()
 	result.Stats.ZipperRequests = int64(zipperRequests)
