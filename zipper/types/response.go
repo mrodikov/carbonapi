@@ -2,7 +2,6 @@ package types
 
 import (
 	"context"
-	"fmt"
 	"math"
 
 	"github.com/ansel1/merry"
@@ -47,7 +46,7 @@ func DoRequest(ctx context.Context, logger *zap.Logger, clients []BackendServer,
 		go fetcher(ctx, logger, client, requests, resCh)
 	}
 
-	logger.Info(fmt.Sprintf("DBG: DoRequest with %s clients", len(clients)))
+	//logger.Info(fmt.Sprintf("DBG: DoRequest with %s clients", len(clients)))
 
 	answeredServers := make(map[string]struct{})
 	responseCount := 0

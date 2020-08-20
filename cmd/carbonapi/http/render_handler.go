@@ -71,6 +71,9 @@ func renderHandler(w http.ResponseWriter, r *http.Request) {
 	username, _, _ := r.BasicAuth()
 	requestHeaders := utilctx.GetLogHeaders(ctx)
 
+	slowLogger := zapwriter.Logger("slow")
+	slowLogger.Info("DBG: renderHandler", zap.Any("request", r))
+
 	logger := zapwriter.Logger("render").With(
 		zap.String("carbonapi_uuid", uid.String()),
 		zap.String("username", username),
