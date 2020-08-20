@@ -147,7 +147,7 @@ func (bg *BroadcastGroup) doSingleFetch(ctx context.Context, logger *zap.Logger,
 	logger.Debug("got slot")
 	defer bg.limiter.Leave(ctx, backend.Name())
 	elapsed := time.Since(start)
-	//logger.Debug(fmt.Sprintf("Slot wait time: %s", elapsed))
+	logger.Debug(fmt.Sprintf("Slot wait time: %s", elapsed))
 
 	// uuid := util.GetUUID(ctx)
 	var err merry.Error
@@ -159,7 +159,7 @@ func (bg *BroadcastGroup) doSingleFetch(ctx context.Context, logger *zap.Logger,
 		r.AddError(err)
 		logger.Debug("got response")
 		elapsed := time.Since(start)
-		//logger.Info(fmt.Sprintf("Single fetch time: %s", elapsed))
+		logger.Debug(fmt.Sprintf("Single fetch time: %s", elapsed))
 		_ = response.Merge(r)
 	}
 
