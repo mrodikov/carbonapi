@@ -262,7 +262,11 @@ func (bg *BroadcastGroup) Fetch(ctx context.Context, request *protov3.MultiFetch
 
 	backends := bg.filterServersByTLD(requestNames, bg.Children())
 	requests, err := bg.splitRequest(ctx, request)
+	logger.Info("DBG: splitted requests", zap.Any("requests", requests))
+
+	start := time.Now()
 	zipperRequests, totalMetricsCount := getFetchRequestMetricStats(requests, bg, backends)
+	logger.Info(fmt.Sprintf("DBG: getFetchRequestMetricStats %s", time.Since(start)))
 
 	result := types.NewServerFetchResponse()
 	result.Stats.ZipperRequests = int64(zipperRequests)
