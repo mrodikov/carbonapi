@@ -130,7 +130,7 @@ func (bg *BroadcastGroup) doSingleFetch(ctx context.Context, logger *zap.Logger,
 		)
 	}
 	logger = logger.With(zap.String("backend_name", backend.Name()))
-	logger.Info("waiting for slot",
+	logger.Debug("waiting for slot",
 		zap.Int("max_connections", bg.limiter.Capacity()),
 	)
 
@@ -139,7 +139,7 @@ func (bg *BroadcastGroup) doSingleFetch(ctx context.Context, logger *zap.Logger,
 
 	start := time.Now()
 	if err := bg.limiter.Enter(ctx, backend.Name()); err != nil {
-		logger.Info("timeout waiting for a slot")
+		logger.Debug("timeout waiting for a slot")
 		resCh <- response.NonFatalError(merry.Prepend(err, "timeout waiting for slot"))
 		return
 	}
@@ -147,7 +147,7 @@ func (bg *BroadcastGroup) doSingleFetch(ctx context.Context, logger *zap.Logger,
 	logger.Debug("got slot")
 	defer bg.limiter.Leave(ctx, backend.Name())
 	elapsed := time.Since(start)
-	logger.Info(fmt.Sprintf("Slot wait time: %s", elapsed))
+	//logger.Debug(fmt.Sprintf("Slot wait time: %s", elapsed))
 
 	// uuid := util.GetUUID(ctx)
 	var err merry.Error
@@ -159,7 +159,7 @@ func (bg *BroadcastGroup) doSingleFetch(ctx context.Context, logger *zap.Logger,
 		r.AddError(err)
 		logger.Debug("got response")
 		elapsed := time.Since(start)
-		logger.Info(fmt.Sprintf("Single fetch time: %s", elapsed))
+		//logger.Info(fmt.Sprintf("Single fetch time: %s", elapsed))
 		_ = response.Merge(r)
 	}
 
